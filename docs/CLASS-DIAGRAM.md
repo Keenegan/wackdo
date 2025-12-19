@@ -37,6 +37,8 @@ classDiagram
         id : int
         name : String
         basePrice : float
+        description: String
+        image: String
     }
 
     class Product {
@@ -50,7 +52,6 @@ classDiagram
     }
 
     class Menu {
-        description: String
     }
 
     class MenuOption {
@@ -68,5 +69,4 @@ classDiagram
     Order "1" --> "1" Employee : has
     Menu "1" --> "1..*" Product : composedOf
     Menu "1" --> "0..*" MenuOption: has
-    ```
-    ```
+```
