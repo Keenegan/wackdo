@@ -32,7 +32,6 @@ classDiagram
 
     class OrderLine {
         id : int
-        quantity : int
         unitPrice : float
     }
 

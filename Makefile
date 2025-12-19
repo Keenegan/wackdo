@@ -2,7 +2,7 @@ APP_NAME := wackdo
 
 .PHONY: run
 run:
-	go run .
+	go run src/main.go
 
 .PHONY: up
 up:
