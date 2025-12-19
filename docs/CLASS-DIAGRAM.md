@@ -4,11 +4,15 @@ classDiagram
     class Employee {
         id : int
         name: String
+        roles: Role[0..*]
     }
 
     class Role {
-        id : int
-        name: String
+        <<enumeration>>
+        ADMIN
+        CASHIER
+        PREPARER
+        MANAGER
     }
 
     class Order {
@@ -65,7 +69,6 @@ classDiagram
 
     Order "1" *-- "1..*" OrderLine : contains
     OrderLine "1" --> "1" SellableItem : refersTo
-    Employee "1..*" --> "1..*" Role : has
     Order "1" --> "1" Employee : has
     Menu "1" --> "1..*" Product : composedOf
     Menu "1" --> "0..*" MenuOption: has
