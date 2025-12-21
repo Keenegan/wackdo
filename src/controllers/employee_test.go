@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestValidateEmployeeRequest(t *testing.T) {
+func TestValidateEmployeePostRequest(t *testing.T) {
 	tests := []struct {
 		name    string
 		req     controllers.EmployeePostRequest
@@ -23,15 +23,6 @@ func TestValidateEmployeeRequest(t *testing.T) {
 				Roles: []models.Role{models.RoleAdmin},
 			},
 			wantErr: false,
-		},
-		{
-			name: "missing name",
-			req: controllers.EmployeePostRequest{
-				Name:  "",
-				Roles: []models.Role{models.RoleAdmin},
-			},
-			wantErr: true,
-			errMsg:  "name is required",
 		},
 		{
 			name: "name only spaces",

@@ -20,26 +20,3 @@ type OrderLine struct {
 	unitPrice float32
 	item      SellableItem
 }
-
-type SellableItem struct {
-	ID          uint
-	name        string
-	basePrice   float32
-	description string
-	image       string
-}
-
-type Product struct {
-	ID       uint
-	category string
-}
-
-type Menu struct {
-	ID uint
-}
-
-type MenuOption struct {
-	ID    uint
-	price float32
-	name  string
-}

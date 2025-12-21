@@ -10,7 +10,6 @@ import (
 
 func main() {
 
-
 	r := gin.Default()
 
 	r.Use(cors.Default())
@@ -21,6 +20,10 @@ func main() {
 
 	r.POST("/employee", func(c *gin.Context) {
 		controllers.PostEmployee(c)
+	})
+
+	r.POST("/product", func(c *gin.Context) {
+		controllers.PostProduct(c)
 	})
 
 	r.Run()

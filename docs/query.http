@@ -1,12 +1,6 @@
 @host=http://localhost:8080
 
 GET {{host}}/status
-
-HTTP/1.1 200  - OK
-content-type: application/json; charset=utf-8
-date: Sun, 21 Dec 2025 08:21:19 GMT
-content-length: 16
-connection: close
 ###
 POST http://localhost:8080/employee
 Content-Type: application/json
@@ -15,9 +9,14 @@ Content-Type: application/json
   "name": "alice",
   "roles": ["admin", "manager"]
 }
+###
+POST http://localhost:8080/product
+Content-Type: application/json
 
-HTTP/1.1 200  - OK
-content-type: application/json; charset=utf-8
-date: Sun, 21 Dec 2025 08:22:51 GMT
-content-length: 44
-connection: close
+{
+  "name": "burger",
+  "basePrice": 12.0,
+  "description": "un burger",
+  "image": "lien vers une image de burger",
+  "category": "food"
+}

@@ -2,6 +2,7 @@ package initializers
 
 import (
 	"os"
+	"wackdo/src/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -22,5 +23,5 @@ func ConnectToDatabase() {
 		panic("Can't connect to database : " + err.Error())
 	}
 
-	DB.AutoMigrate()
+	DB.AutoMigrate(&models.Employee{}, &models.Product{})
 }
