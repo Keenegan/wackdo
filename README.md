@@ -4,4 +4,5 @@
 See [class diagram](docs/CLASS-DIAGRAM.md)
 
 ## Run
-Copy `.env.dist` into `.env` and fill variables, then run `eval export $(cat .env)`
+Copy `.env.dist` into `.env` and fill variables
+Use `make up` to build containers and `make run` to run backend

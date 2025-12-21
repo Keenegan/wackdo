@@ -4,6 +4,11 @@ APP_NAME := wackdo
 run:
 	go run src/main.go
 
+.PHONY: test
+test:
+	go test ./...
+
+
 .PHONY: up
 up:
 	docker-compose up -d --build	

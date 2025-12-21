@@ -7,7 +7,7 @@ import (
 type Employee struct {
 	ID    uint
 	Name  string
-	Roles datatypes.JSONSlice[string]
+	Roles datatypes.JSONSlice[Role]
 }
 
 type Order struct {

@@ -1,7 +1,23 @@
-GET http://localhost:8080/status
+@host=http://localhost:8080
+
+GET {{host}}/status
 
 HTTP/1.1 200  - OK
 content-type: application/json; charset=utf-8
-date: Fri, 19 Dec 2025 14:27:58 GMT
+date: Sun, 21 Dec 2025 08:21:19 GMT
 content-length: 16
+connection: close
+###
+POST http://localhost:8080/employee
+Content-Type: application/json
+
+{
+  "name": "alice",
+  "roles": ["admin", "manager"]
+}
+
+HTTP/1.1 200  - OK
+content-type: application/json; charset=utf-8
+date: Sun, 21 Dec 2025 08:22:51 GMT
+content-length: 44
 connection: close
