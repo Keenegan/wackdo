@@ -34,6 +34,10 @@ func main() {
 		controllers.DeleteProduct(c)
 	})
 
+	r.PATCH("/product", func(c *gin.Context) {
+		controllers.UpdateProduct(c)
+	})
+
 	r.Run()
 }
 
