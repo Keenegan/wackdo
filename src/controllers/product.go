@@ -15,6 +15,7 @@ type ProductPostRequest struct {
 	Description string          `json:"description"`
 	Image       string          `json:"image"`
 	Category    models.Category `json:"category" binding:"required"`
+	Available   *bool           `json:"available"`
 }
 
 func PostProduct(c *gin.Context) {
@@ -27,7 +28,7 @@ func PostProduct(c *gin.Context) {
 		return
 	}
 
-	if err := ValidateProductPostRequest(req); err != nil {
+	if err := ValidateProductPostRequest(&req); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
@@ -38,6 +39,7 @@ func PostProduct(c *gin.Context) {
 		Description: req.Description,
 		Image:       req.Image,
 		Category:    req.Category,
+		Available:   *req.Available,
 	}
 	initializers.DB.Create(insertProduct)
 
@@ -47,12 +49,18 @@ func PostProduct(c *gin.Context) {
 		"description": req.Description,
 		"image":       req.Image,
 		"category":    req.Category,
+		"available":   req.Available,
 	})
 }
 
-func ValidateProductPostRequest(req ProductPostRequest) error {
+func ValidateProductPostRequest(req *ProductPostRequest) error {
 	if strings.TrimSpace(req.Name) == "" {
 		return errors.New("name is required")
+	}
+
+	if req.Available == nil {
+		defaultAvailable := true
+		req.Available = &defaultAvailable
 	}
 
 	if req.BasePrice <= 0 {

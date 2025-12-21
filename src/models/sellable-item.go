@@ -11,6 +11,7 @@ type Product struct {
 	Description string
 	Image       string
 	Category    Category
+	Available   bool
 }
 
 type Category string
