@@ -2,49 +2,59 @@ package controllers_products
 
 import (
 	"net/http"
+	"strconv"
 	"wackdo/src/service"
 	product_repository "wackdo/src/service/repository"
 
 	"github.com/gin-gonic/gin"
 )
 
-type ProductGetRequest struct {
-	ID   uint   `json:"id"`
-	Name string `json:"name"`
-}
-
 func GetProducts(c *gin.Context) {
-	var req ProductGetRequest
-
-	if err := c.ShouldBindJSON(&req); err != nil {
-		// Find all products paginated
-		pageSize := 10
-		page := (service.GetPagerFromContext(c) - 1) * pageSize
-
-		if products, err := product_repository.GetProducts(page, pageSize); err != nil {
-			c.JSON(500, gin.H{"error": err.Error()})
+	// Find product by ID
+	idStr := c.Query("id")
+	if idStr != "" && idStr != "0" {
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
 			return
-		} else {
-			c.JSON(http.StatusCreated, products)
-
 		}
+
+		product, err := product_repository.GetProductById(id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, product)
 		return
 	}
-	if req.ID != 0 {
-		// Find product by ID
-		if product, err := product_repository.GetProductById(int(req.ID)); err != nil {
-			c.JSON(500, gin.H{"error": err.Error()})
-		} else {
-			c.JSON(http.StatusCreated, product)
+
+	// Find product by name
+	name := c.Query("name")
+	if name != "" {
+		product, err := product_repository.GetProductByName(name)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
 		}
-	}
-	if req.Name != "" {
-		// Find product by name
-		if product, err := product_repository.GetProductByName(req.Name); err != nil {
-			c.JSON(500, gin.H{"error": err.Error()})
-		} else {
-			c.JSON(http.StatusCreated, product)
-		}
+
+		c.JSON(http.StatusOK, product)
+		return
 	}
 
+	// Default: find all products paginated
+	pageSize := 10
+	pageNum := service.GetPagerFromContext(c)
+	if pageNum < 1 {
+		pageNum = 1
+	}
+	page := (pageNum - 1) * pageSize
+
+	products, err := product_repository.GetProducts(page, pageSize)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, products)
 }

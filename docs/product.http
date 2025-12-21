@@ -1,0 +1,38 @@
+GET http://localhost:8080/products?page=1&id=3
+Content-Type: application/json
+
+HTTP/1.1 200  - OK
+content-type: application/json; charset=utf-8
+date: Sun, 21 Dec 2025 17:20:45 GMT
+content-length: 141
+connection: close
+###
+POST http://localhost:8080/product
+Content-Type: application/json
+
+{
+  "name": "burger",
+  "basePrice": 12.0,
+  "description": "un burger",
+  "image": "lien vers une image de burger",
+  "category": "food"
+}
+###
+DELETE http://localhost:8080/product
+Content-Type: application/json
+
+{
+  "id": 1
+}
+###
+PATCH http://localhost:8080/product
+Content-Type: application/json
+
+{
+  "id": 11,
+  "name": "buerger 11",
+  "basePrice": 12.0,
+  "description": "un burger",
+  "category": "drink",
+  "available": false
+}
