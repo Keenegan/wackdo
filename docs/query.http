@@ -1,6 +1,4 @@
-@host=http://localhost:8080
-
-GET {{host}}/status
+GET http://localhost:8080/status
 ###
 POST http://localhost:8080/employee
 Content-Type: application/json
@@ -14,9 +12,12 @@ POST http://localhost:8080/product
 Content-Type: application/json
 
 {
-  "name": "burger",
+  "name": "burgeraaaa",
   "basePrice": 12.0,
   "description": "un burger",
   "image": "lien vers une image de burger",
   "category": "food"
 }
+###
+GET http://localhost:8080/products?page=1
+Content-Type: application/json

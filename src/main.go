@@ -26,6 +26,14 @@ func main() {
 		controllers.PostProduct(c)
 	})
 
+	r.GET("/products", func(c *gin.Context) {
+		controllers.GetProducts(c)
+	})
+
+	r.DELETE("/product", func(c *gin.Context) {
+		controllers.DeleteProduct(c)
+	})
+
 	r.Run()
 }
 

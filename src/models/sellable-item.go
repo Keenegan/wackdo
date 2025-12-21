@@ -6,7 +6,7 @@ type SellableItem struct {
 
 type Product struct {
 	ID          uint
-	Name        string
+	Name        string `gorm:"uniqueIndex"`
 	BasePrice   float32
 	Description string
 	Image       string
@@ -32,7 +32,7 @@ func (c Category) IsValid() bool {
 
 type Menu struct {
 	ID          uint
-	name        string
+	name        string `gorm:"uniqueIndex"`
 	basePrice   float32
 	description string
 	image       string

@@ -78,7 +78,7 @@ func TestValidateProductPostRequest(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := controllers.ValidateProductPostRequest(tt.req)
+			err := controllers.ValidateProductPostRequest(&tt.req)
 
 			if tt.wantErr {
 				assert.Error(t, err)
