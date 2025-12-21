@@ -2,6 +2,7 @@ package main
 
 import (
 	"wackdo/src/controllers"
+	controllers_products "wackdo/src/controllers/product"
 	"wackdo/src/initializers"
 
 	"github.com/gin-contrib/cors"
@@ -23,19 +24,19 @@ func main() {
 	})
 
 	r.POST("/product", func(c *gin.Context) {
-		controllers.PostProduct(c)
+		controllers_products.PostProduct(c)
 	})
 
 	r.GET("/products", func(c *gin.Context) {
-		controllers.GetProducts(c)
+		controllers_products.GetProducts(c)
 	})
 
 	r.DELETE("/product", func(c *gin.Context) {
-		controllers.DeleteProduct(c)
+		controllers_products.DeleteProduct(c)
 	})
 
 	r.PATCH("/product", func(c *gin.Context) {
-		controllers.UpdateProduct(c)
+		controllers_products.UpdateProduct(c)
 	})
 
 	r.Run()

@@ -1,9 +1,8 @@
-package controllers_test
+package controllers_products
 
 import (
 	"testing"
 
-	"wackdo/src/controllers"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -11,13 +10,13 @@ import (
 func TestValidateProductPostRequest(t *testing.T) {
 	tests := []struct {
 		name    string
-		req     controllers.ProductPostRequest
+		req     ProductPostRequest
 		wantErr bool
 		errMsg  string
 	}{
 		{
 			name: "valid request",
-			req: controllers.ProductPostRequest{
+			req: ProductPostRequest{
 				Name:        "Burger",
 				BasePrice:   12.0,
 				Description: "A burger",
@@ -28,7 +27,7 @@ func TestValidateProductPostRequest(t *testing.T) {
 		},
 		{
 			name: "name only spaces",
-			req: controllers.ProductPostRequest{
+			req: ProductPostRequest{
 				Name:        " ",
 				BasePrice:   0,
 				Description: "A burger",
@@ -40,7 +39,7 @@ func TestValidateProductPostRequest(t *testing.T) {
 		},
 		{
 			name: "base price 0",
-			req: controllers.ProductPostRequest{
+			req: ProductPostRequest{
 				Name:        "Burger",
 				BasePrice:   0,
 				Description: "A burger",
@@ -48,11 +47,11 @@ func TestValidateProductPostRequest(t *testing.T) {
 				Category:    "drink",
 			},
 			wantErr: true,
-			errMsg:  "base price can't be 0 or less",
+			errMsg:  "basePrice must be greater than 0",
 		},
 		{
 			name: "base price < 0",
-			req: controllers.ProductPostRequest{
+			req: ProductPostRequest{
 				Name:        "Burger",
 				BasePrice:   -12.2,
 				Description: "A burger",
@@ -60,11 +59,11 @@ func TestValidateProductPostRequest(t *testing.T) {
 				Category:    "drink",
 			},
 			wantErr: true,
-			errMsg:  "base price can't be 0 or less",
+			errMsg:  "basePrice must be greater than 0",
 		},
 		{
 			name: "invalid category",
-			req: controllers.ProductPostRequest{
+			req: ProductPostRequest{
 				Name:        "Burger",
 				BasePrice:   12.2,
 				Description: "A burger",
@@ -78,7 +77,7 @@ func TestValidateProductPostRequest(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := controllers.ValidateProductPostRequest(&tt.req)
+			err := ValidateProductPostRequest(&tt.req)
 
 			if tt.wantErr {
 				assert.Error(t, err)
