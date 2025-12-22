@@ -89,3 +89,5 @@ func ValidateProductPostRequest(req *ProductPostRequest) error {
 
 	return nil
 }
+
+// todo use repository

@@ -44,3 +44,12 @@ func GetProducts(page, pageSize int) ([]models.Product, error) {
 	return products, err
 
 }
+
+func DeleteProductById(id int) error {
+	if err := initializers.DB.Delete(&models.Product{}, id).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// todo create a manager between controller & repository, but it might be overkill

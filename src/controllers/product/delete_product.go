@@ -2,30 +2,31 @@ package controllers_products
 
 import (
 	"net/http"
-	"wackdo/src/initializers"
-	"wackdo/src/models"
+	product_repository "wackdo/src/service/repository"
 
 	"github.com/gin-gonic/gin"
 )
 
 type ProductDeleteRequest struct {
-	ID uint `json:"id" binding:"required"`
+	ID int `json:"id" binding:"required"`
 }
 
 func DeleteProduct(c *gin.Context) {
 	var req ProductDeleteRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
 
-	if err := initializers.DB.Delete(&models.Product{}, req.ID).Error; err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+	if err := product_repository.DeleteProductById(req.ID); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusNoContent, "")
 }
+
+// todo add test for this file

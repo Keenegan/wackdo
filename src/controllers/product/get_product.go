@@ -26,6 +26,7 @@ func GetProducts(c *gin.Context) {
 		}
 
 		c.JSON(http.StatusOK, product)
+		 
 		return
 	}
 
@@ -34,7 +35,7 @@ func GetProducts(c *gin.Context) {
 	if name != "" {
 		product, err := product_repository.GetProductByName(name)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
 
@@ -52,9 +53,11 @@ func GetProducts(c *gin.Context) {
 
 	products, err := product_repository.GetProducts(page, pageSize)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, products)
 }
+
+// todo add test for this file
