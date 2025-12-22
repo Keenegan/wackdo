@@ -1,7 +1,0 @@
-GET http://localhost:8080/status
-
-HTTP/1.1 200  - OK
-content-type: application/json; charset=utf-8
-date: Fri, 19 Dec 2025 13:21:01 GMT
-content-length: 16
-connection: close

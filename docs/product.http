@@ -1,0 +1,32 @@
+GET http://localhost:8080/products?page=2
+Content-Type: application/json
+###
+POST http://localhost:8080/product
+Content-Type: application/json
+
+{
+  "name": "burger",
+  "basePrice": 12.0,
+  "description": "un burger",
+  "image": "lien vers une image de burger",
+  "category": "food"
+}
+###
+DELETE http://localhost:8080/product
+Content-Type: application/json
+
+{
+  "id": 2
+}
+###
+PATCH http://localhost:8080/product
+Content-Type: application/json
+
+{
+  "id": 11,
+  "name": "buerger 11",
+  "basePrice": 12.0,
+  "description": "un burger",
+  "category": "drink",
+  "available": false
+}
