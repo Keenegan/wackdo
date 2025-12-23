@@ -23,5 +23,5 @@ func ConnectToDatabase() {
 		panic("Can't connect to database : " + err.Error())
 	}
 
-	DB.AutoMigrate(&models.Employee{}, &models.Product{})
+	DB.AutoMigrate(&models.Product{})
 }
