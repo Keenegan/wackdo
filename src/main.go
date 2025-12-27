@@ -3,6 +3,7 @@ package main
 import (
 	"wackdo/src/controllers"
 	controllers_products "wackdo/src/controllers/product"
+	controllers_menu "wackdo/src/controllers/menu"
 	"wackdo/src/initializers"
 	"wackdo/src/service/middleware"
 
@@ -20,6 +21,22 @@ func main() {
 
 	r.GET("/status", func(c *gin.Context) {
 		controllers.Status(c)
+	})
+
+	r.POST("/menu", func(c *gin.Context) {
+		controllers_menu.PostMenu(c)
+	})
+
+	r.GET("/menu", func(c *gin.Context) {
+		controllers_menu.GetMenu(c)
+	})
+
+	r.DELETE("/menu", func(c *gin.Context) {
+		controllers_menu.DeleteMenu(c)
+	})
+
+	r.PATCH("/menu", func(c *gin.Context) {
+		controllers_menu.UpdateMenu(c)
 	})
 
 	r.POST("/product", func(c *gin.Context) {

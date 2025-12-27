@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"wackdo/src/models"
 	"wackdo/src/service"
-	product_repository "wackdo/src/service/repository"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,7 +31,7 @@ func GetProducts(c *gin.Context) {
 			return
 		}
 
-		product, err := product_repository.GetProductById(id)
+		product, err := service.GetProductById(id)
 		if err != nil {
 			c.Error(err)
 			return
@@ -41,7 +40,7 @@ func GetProducts(c *gin.Context) {
 
 	} else if name != "" {
 		// Find product by name
-		product, err := product_repository.GetProductByName(name)
+		product, err := service.GetProductByName(name)
 		if err != nil {
 			c.Error(err)
 			return
@@ -58,7 +57,7 @@ func GetProducts(c *gin.Context) {
 		}
 		page := (pageNum - 1) * pageSize
 
-		results, err := product_repository.GetProducts(page, pageSize)
+		results, err := service.GetProducts(page, pageSize)
 		if err != nil {
 			c.Error(err)
 			return

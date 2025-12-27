@@ -4,8 +4,8 @@ import (
 	"errors"
 	"net/http"
 	"strings"
-	"wackdo/src/initializers"
 	"wackdo/src/models"
+	"wackdo/src/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -34,38 +34,30 @@ func PostProduct(c *gin.Context) {
 		return
 	}
 
-	var count int64
-	initializers.DB.Model(&models.Product{}).
-		Where("name = ?", req.Name).
-		Count(&count)
-
-	if count > 0 {
+	if exists, err := service.ProductExists(req.Name); exists || err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Product name already exists"})
 		return
 	}
-
-	insertProduct := &models.Product{
+	newProduct, err := service.CreateProduct(models.Product{
 		Name:        req.Name,
 		BasePrice:   req.BasePrice,
 		Description: req.Description,
 		Image:       req.Image,
 		Category:    req.Category,
 		Available:   *req.Available,
-	}
-
-	err := initializers.DB.Create(insertProduct).Error
+	})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"id":          insertProduct.ID,
-		"name":        insertProduct.Name,
-		"basePrice":   insertProduct.BasePrice,
-		"description": insertProduct.Description,
-		"image":       insertProduct.Image,
-		"category":    insertProduct.Category,
-		"available":   insertProduct.Available,
+		"id":          newProduct.ID,
+		"name":        newProduct.Name,
+		"basePrice":   newProduct.BasePrice,
+		"description": newProduct.Description,
+		"image":       newProduct.Image,
+		"category":    newProduct.Category,
+		"available":   newProduct.Available,
 	})
 }
 

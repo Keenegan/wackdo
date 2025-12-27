@@ -32,11 +32,11 @@ func (c Category) IsValid() bool {
 
 type Menu struct {
 	ID          uint
-	name        string
-	basePrice   float32
-	description string
-	image       string
-	options     []MenuOption
+	Name        string
+	BasePrice   float32
+	Description string
+	Image       string
+	Options     []MenuOption
 }
 
 type MenuOption struct {

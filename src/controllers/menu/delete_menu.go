@@ -1,4 +1,4 @@
-package controllers_products
+package controllers_menus
 
 import (
 	"net/http"
@@ -7,12 +7,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ProductDeleteRequest struct {
+type MenuDeleteRequest struct {
 	ID int `json:"id" binding:"required"`
 }
 
-func DeleteProduct(c *gin.Context) {
-	var req ProductDeleteRequest
+func DeleteMenu(c *gin.Context) {
+	var req MenuDeleteRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -21,7 +21,7 @@ func DeleteProduct(c *gin.Context) {
 		return
 	}
 
-	if err := service.DeleteProductById(req.ID); err != nil {
+	if err := service.DeleteMenuById(req.ID); err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
