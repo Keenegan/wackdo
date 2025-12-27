@@ -16,3 +16,5 @@ func GetPagerFromContext(c *gin.Context) (page int) {
 	}
 	return
 }
+
+// todo rename ?

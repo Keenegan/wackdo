@@ -1,7 +1,0 @@
-POST http://localhost:8080/employee
-Content-Type: application/json
-
-{
-  "name": "alice",
-  "roles": ["admin", "manager"]
-}
