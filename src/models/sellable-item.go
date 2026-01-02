@@ -36,11 +36,5 @@ type Menu struct {
 	BasePrice   float32
 	Description string
 	Image       string
-	Options     []MenuOption
-}
-
-type MenuOption struct {
-	ID    uint
-	price float32
-	name  string
+	Products    []Product `gorm:"many2many:menu_products;constraint:OnDelete:CASCADE;"`
 }

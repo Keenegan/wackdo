@@ -21,12 +21,17 @@ func DeleteProductById(id int) error {
 	return repository.DeleteSellableItemByID[models.Product](id)
 }
 
+// todo rename
 func ProductExists(name string) (bool, error) {
 	count, err := repository.GetAllSellableItemByName[models.Product](name)
 	if err != nil {
 		return false, err
 	}
 	return count > 0, nil
+}
+
+func GetProductsByIds(ids []uint) ([]models.Product, error) {
+	return repository.GetAllSellableItemById[models.Product](ids)
 }
 
 func CreateProduct(product models.Product) (models.Product, error) {

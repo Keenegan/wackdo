@@ -11,6 +11,7 @@ type ProductDeleteRequest struct {
 	ID int `json:"id" binding:"required"`
 }
 
+// todo delete product in a menu ?
 func DeleteProduct(c *gin.Context) {
 	var req ProductDeleteRequest
 

@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// todo get only available products
 func GetProducts(c *gin.Context) {
 	var products = []models.Product{}
 
