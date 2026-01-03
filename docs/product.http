@@ -1,28 +1,23 @@
-GET http://localhost:8080/products?page=1
+GET http://localhost:8080/products
 Content-Type: application/json
-
-HTTP/1.1 200  - OK
-content-type: application/json; charset=utf-8
-date: Tue, 23 Dec 2025 14:25:23 GMT
-content-length: 1398
-connection: close
 ###
 POST http://localhost:8080/product
 Content-Type: application/json
 
 {
-  "name": "burger",
-  "basePrice": 12.0,
-  "description": "un burger",
-  "image": "lien vers une image de burger",
-  "category": "food"
+  "name": "coca",
+  "basePrice": 2.0,
+  "description": "un coca",
+  "image": "lien vers une image de coca",
+  "category": "food",
+  "available": true
 }
 ###
 DELETE http://localhost:8080/product
 Content-Type: application/json
 
 {
-  "id": 3
+  "id": 5
 }
 ###
 PATCH http://localhost:8080/product

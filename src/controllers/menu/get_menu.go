@@ -1,4 +1,4 @@
-package controllers_products
+package controllers_menus
 
 import (
 	"net/http"
@@ -10,13 +10,13 @@ import (
 )
 
 // todo get only available products
-func GetProducts(c *gin.Context) {
-	var products = []models.Product{}
+func GetMenu(c *gin.Context) {
+	var menus = []models.Menu{}
 
 	name := c.Query("name")
 	idStr := c.Query("id")
 
-	// Find product by ID
+	// Find menu by ID
 	if idStr != "" && name != "" {
 		c.Error(&service.InvalidParamError{
 			Reason: "cannot filter by id and name at the same time",
@@ -32,25 +32,25 @@ func GetProducts(c *gin.Context) {
 			return
 		}
 
-		product, err := service.GetProductById(id)
+		menu, err := service.GetMenuById(id)
 		if err != nil {
 			c.Error(err)
 			return
 		}
-		products = append(products, product)
+		menus = append(menus, menu)
 
 	} else if name != "" {
-		// Find product by name
-		product, err := service.GetProductByName(name)
+		// Find menu by name
+		menu, err := service.GetMenuByName(name)
 		if err != nil {
 			c.Error(err)
 			return
 		}
 
-		products = append(products, product)
+		menus = append(menus, menu)
 
 	} else {
-		// Default: find all products paginated
+		// Default: find all menus paginated
 		pageSize := 10
 		pageNum := service.GetPagerFromContext(c)
 		if pageNum < 1 {
@@ -58,16 +58,16 @@ func GetProducts(c *gin.Context) {
 		}
 		page := (pageNum - 1) * pageSize
 
-		results, err := service.GetProducts(page, pageSize)
+		results, err := service.GetMenus(page, pageSize)
 		if err != nil {
 			c.Error(err)
 			return
 		}
-		products = append(products, results...)
+		menus = append(menus, results...)
 
 	}
 
-	c.JSON(http.StatusOK, products)
+	c.JSON(http.StatusOK, menus)
 }
 
 // todo add test for this file

@@ -32,15 +32,9 @@ func (c Category) IsValid() bool {
 
 type Menu struct {
 	ID          uint
-	name        string
-	basePrice   float32
-	description string
-	image       string
-	options     []MenuOption
-}
-
-type MenuOption struct {
-	ID    uint
-	price float32
-	name  string
+	Name        string
+	BasePrice   float32
+	Description string
+	Image       string
+	Products    []Product `gorm:"many2many:menu_products;constraint:OnDelete:CASCADE;"`
 }
