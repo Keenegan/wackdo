@@ -2,9 +2,11 @@ package main
 
 import (
 	"wackdo/src/controllers"
-	controllers_products "wackdo/src/controllers/product"
 	controllers_menu "wackdo/src/controllers/menu"
+	controllers_products "wackdo/src/controllers/product"
+	controllers_user "wackdo/src/controllers/user"
 	"wackdo/src/initializers"
+	"wackdo/src/models"
 	"wackdo/src/service/middleware"
 
 	"github.com/gin-contrib/cors"
@@ -54,6 +56,18 @@ func main() {
 	r.PATCH("/product", func(c *gin.Context) {
 		controllers_products.UpdateProduct(c)
 	})
+
+	r.POST("/register", controllers_user.Register)
+	r.POST("/login", controllers_user.Login)
+
+	r.PATCH(
+		"/user/:id",
+		middleware.AuthMiddleware(
+			models.RoleAdmin,
+			models.RoleManager,
+		),
+		controllers_user.UpdateUser,
+	)
 
 	r.Run()
 }
