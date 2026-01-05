@@ -18,11 +18,11 @@ func (r Role) IsValid() bool {
 	}
 }
 
-func AreAllRolesValid(r []Role) bool {
-	for _, role := range r {
-		if !role.IsValid() {
-			return false
-		}
+func IsValidRole(role Role) bool {
+	switch role {
+	case RoleAdmin, RoleManager, RoleEmployee, RolePrep:
+		return true
+	default:
+		return false
 	}
-	return true
 }

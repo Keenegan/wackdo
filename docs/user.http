@@ -1,0 +1,42 @@
+POST http://localhost:8080/register
+Content-Type: application/json
+
+{
+  "email": "toto",
+  "password": "toto"
+}
+
+HTTP/1.1 201  - Created
+content-type: application/json; charset=utf-8
+date: Sat, 03 Jan 2026 16:53:00 GMT
+content-length: 26
+connection: close
+###
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "email": "toto",
+  "password": "toto"
+}
+
+HTTP/1.1 200  - OK
+content-type: application/json; charset=utf-8
+date: Sat, 03 Jan 2026 16:51:40 GMT
+content-length: 168
+connection: close
+###
+PATCH http://localhost:8080/user/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3Njc1NDUzMDB9.jD690DiJ9xNr6aiSkL7UBkw0eXLVxbqthAFXiHk64y4
+
+
+{
+  "email": "new@mail.com",
+  "role": "employee"
+}
+
+HTTP/1.1 401  - Unauthorized
+date: Sat, 03 Jan 2026 16:57:40 GMT
+content-length: 0
+connection: close
