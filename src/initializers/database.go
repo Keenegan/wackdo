@@ -23,6 +23,6 @@ func ConnectToDatabase() {
 		panic("Can't connect to database : " + err.Error())
 	}
 
-	DB.AutoMigrate(&models.Product{}, &models.Menu{}, &models.User{})
+	DB.AutoMigrate(&models.Product{}, &models.Menu{}, &models.User{}, &models.Order{}, &models.OrderLine{})
 	
 }

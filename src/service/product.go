@@ -1,43 +1,116 @@
 package service
 
 import (
+	"errors"
+	"wackdo/src/initializers"
 	"wackdo/src/models"
-	"wackdo/src/service/repository"
+
+	"gorm.io/gorm"
 )
 
 func GetProductById(id int) (models.Product, error) {
-	return repository.GetSellableItemByID[models.Product](id)
+	var product models.Product
+
+	if id <= 0 {
+		return product, &EntityNotFoundError{models.Product{}}
+	}
+
+	err := initializers.DB.First(&product, id).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return product, &EntityNotFoundError{models.Product{}}
+		}
+		return product, err
+	}
+
+	return product, nil
 }
 
 func GetProductByName(name string) (models.Product, error) {
-	return repository.GetSellableItemByName[models.Product](name)
+	var product models.Product
+
+	err := initializers.DB.
+		Where("name = ?", name).
+		First(&product).
+		Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return product, &EntityNotFoundError{models.Product{}}
+		}
+		return product, err
+	}
+
+	return product, nil
 }
 
 func GetProducts(page, pageSize int) ([]models.Product, error) {
-	return repository.GetAllSellableItems[models.Product](page, pageSize)
+	var products []models.Product
+
+	err := initializers.DB.
+		Order("id ASC").
+		Limit(pageSize).
+		Offset(page).
+		Find(&products).
+		Error
+
+	if err != nil {
+		return products, err
+	}
+
+	return products, nil
 }
 
 func DeleteProductById(id int) error {
-	return repository.DeleteSellableItemByID[models.Product](id)
+	if id <= 0 {
+		return errors.New("invalid id")
+	}
+
+	return initializers.DB.Delete(&models.Product{}, id).Error
 }
 
-// todo rename
 func ProductExists(name string) (bool, error) {
-	count, err := repository.GetAllSellableItemByName[models.Product](name)
+	var count int64
+
+	err := initializers.DB.
+		Model(&models.Product{}).
+		Where("name = ?", name).
+		Count(&count).
+		Error
+
 	if err != nil {
 		return false, err
 	}
+
 	return count > 0, nil
 }
 
 func GetProductsByIds(ids []uint) ([]models.Product, error) {
-	return repository.GetAllSellableItemById[models.Product](ids)
+	var products []models.Product
+
+	err := initializers.DB.
+		Model(&models.Product{}).
+		Where("id IN ?", ids).
+		Find(&products).
+		Error
+
+	if err != nil {
+		return products, err
+	}
+
+	return products, nil
 }
 
 func CreateProduct(product models.Product) (models.Product, error) {
-	created, err := repository.CreateSellableItem(&product)
-	if err != nil {
+	if err := initializers.DB.Create(&product).Error; err != nil {
 		return models.Product{}, err
 	}
-	return *created, nil
+	return product, nil
+}
+
+func UpdateProduct(product models.Product) (models.Product, error) {
+	if err := initializers.DB.Save(&product).Error; err != nil {
+		return product, err
+	}
+	return product, nil
 }

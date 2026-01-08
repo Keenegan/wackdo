@@ -36,15 +36,18 @@ func AuthMiddleware(allowedRoles ...models.Role) gin.HandlerFunc {
 		claims := token.Claims.(*initializers.JwtClaims)
 		userRole := models.Role(claims.Role)
 
-		for _, role := range allowedRoles {
-			if userRole == role {
-				c.Set("userID", claims.UserID)
-				c.Set("role", userRole)
-				c.Next()
-				return
+		// Admin has all rights, so they bypass authentication middleware
+		if userRole != models.RoleAdmin {
+			for _, role := range allowedRoles {
+				if userRole == role {
+					c.Set("userID", claims.UserID)
+					c.Set("role", userRole)
+					c.Next()
+					return
+				}
 			}
-		}
 
-		c.AbortWithStatus(http.StatusForbidden)
+			c.AbortWithStatus(http.StatusForbidden)
+		}
 	}
 }

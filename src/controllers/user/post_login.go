@@ -3,7 +3,6 @@ package controllers_user
 import (
 	"time"
 	"wackdo/src/initializers"
-	"wackdo/src/models"
 	"wackdo/src/service"
 
 	"github.com/gin-gonic/gin"
@@ -20,8 +19,8 @@ func Login(c *gin.Context) {
 
 	c.BindJSON(&body)
 
-	var user models.User
-	if err := initializers.DB.Where("email = ?", body.Email).First(&user).Error; err != nil {
+	user, err := service.GetUserByEmail(body.Email)
+	if err != nil {
 		c.Error(&service.InvalidParamError{
 			Reason: "invalid credentials",
 		})

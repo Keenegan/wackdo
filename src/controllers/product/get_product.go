@@ -69,5 +69,4 @@ func GetProducts(c *gin.Context) {
 
 	c.JSON(http.StatusOK, products)
 }
-
 // todo add test for this file

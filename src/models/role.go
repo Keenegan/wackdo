@@ -3,24 +3,15 @@ package models
 type Role string
 
 const (
-	RoleAdmin    Role = "admin"
-	RoleEmployee Role = "employee"
 	RoleManager  Role = "manager"
+	RoleEmployee Role = "employee"
 	RolePrep     Role = "prep"
+	RoleAdmin    Role = "admin"
 )
-
-func (r Role) IsValid() bool {
-	switch r {
-	case RoleAdmin, RoleManager, RoleEmployee, RolePrep:
-		return true
-	default:
-		return false
-	}
-}
 
 func IsValidRole(role Role) bool {
 	switch role {
-	case RoleAdmin, RoleManager, RoleEmployee, RolePrep:
+	case RoleManager, RoleEmployee, RolePrep, RoleAdmin:
 		return true
 	default:
 		return false

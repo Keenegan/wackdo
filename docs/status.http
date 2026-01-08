@@ -1,8 +1,0 @@
-GET http://localhost:8080/status
-Content-Type: application/json
-
-HTTP/1.1 200  - OK
-content-type: application/json; charset=utf-8
-date: Mon, 22 Dec 2025 10:28:02 GMT
-content-length: 16
-connection: close

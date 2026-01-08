@@ -1,0 +1,750 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Wackdo API",
+    "description": "API pour la gestion de commandes de restaurant",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Serveur de développement"
+    }
+  ],
+  "tags": [
+    {"name": "Status"},
+    {"name": "Auth"},
+    {"name": "Products"},
+    {"name": "Menu"},
+    {"name": "Orders"}
+  ],
+  "paths": {
+    "/status": {
+      "get": {
+        "tags": ["Status"],
+        "summary": "Vérifier le statut du service",
+        "responses": {
+          "200": {
+            "description": "Service en ligne",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Enregistrer un nouvel utilisateur",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Credentials"
+        },
+        "responses": {
+          "201": {
+            "description": "Utilisateur créé",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequest"}
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Connexion utilisateur",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Credentials"
+        },
+        "responses": {
+          "200": {
+            "description": "Connexion réussie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequest"}
+        }
+      }
+    },
+    "/user/{id}": {
+      "patch": {
+        "tags": ["Auth"],
+        "summary": "Mettre à jour un utilisateur",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Utilisateur mis à jour",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {"type": "string"},
+                    "user": {"$ref": "#/components/schemas/User"}
+                  }
+                }
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Lister les utilisateurs",
+        "security": [{"bearerAuth": []}],
+        "parameters": [{"$ref": "#/components/parameters/Page"}],
+        "responses": {
+          "200": {
+            "description": "Liste des utilisateurs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserListResponse"
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/Unauthorized"}
+        }
+      }
+    },
+    "/product": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Lister ou rechercher des produits",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "id", "in": "query", "schema": {"type": "integer"}},
+          {"name": "name", "in": "query", "schema": {"type": "string"}},
+          {"$ref": "#/components/parameters/Page"}
+        ],
+        "responses": {
+          "200": {
+            "description": "Liste de produits",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/Product"}
+                }
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      },
+      "post": {
+        "tags": ["Products"],
+        "summary": "Créer un produit",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/ProductCreate"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Produit créé",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Product"}
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "401": {"$ref": "#/components/responses/Unauthorized"}
+        }
+      },
+      "patch": {
+        "tags": ["Products"],
+        "summary": "Mettre à jour un produit",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/ProductUpdate"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Produit mis à jour",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Product"}
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      }
+    },
+    "/product/{id}": {
+      "delete": {
+        "tags": ["Products"],
+        "summary": "Supprimer un produit",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "204": {"description": "Produit supprimé"},
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      }
+    },
+    "/menu": {
+      "get": {
+        "tags": ["Menu"],
+        "summary": "Lister ou rechercher des menus",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "id", "in": "query", "schema": {"type": "integer"}},
+          {"name": "name", "in": "query", "schema": {"type": "string"}},
+          {"$ref": "#/components/parameters/Page"}
+        ],
+        "responses": {
+          "200": {
+            "description": "Liste de menus",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/Menu"}
+                }
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      },
+      "post": {
+        "tags": ["Menu"],
+        "summary": "Créer un menu",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/MenuCreate"}
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Menu créé",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/MenuResponse"}
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "401": {"$ref": "#/components/responses/Unauthorized"}
+        }
+      },
+      "patch": {
+        "tags": ["Menu"],
+        "summary": "Mettre à jour un menu",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/MenuUpdate"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Menu mis à jour",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Menu"}
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      }
+    },
+    "/menu/{id}": {
+      "delete": {
+        "tags": ["Menu"],
+        "summary": "Supprimer un menu",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "204": {"description": "Menu supprimé"},
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      }
+    },
+    "/order/": {
+      "post": {
+        "tags": ["Orders"],
+        "summary": "Créer une commande",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["items"],
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {"$ref": "#/components/schemas/OrderItemRequest"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Commande créée",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Order"}
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "401": {"$ref": "#/components/responses/Unauthorized"}
+        }
+      }
+    },
+    "/orders": {
+      "get": {
+        "tags": ["Orders"],
+        "summary": "Lister les commandes",
+        "parameters": [{"$ref": "#/components/parameters/Page"}],
+        "responses": {
+          "200": {
+            "description": "Liste des commandes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/order/{id}": {
+      "get": {
+        "tags": ["Orders"],
+        "summary": "Obtenir une commande",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Détails de la commande",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Order"}
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      },
+      "patch": {
+        "tags": ["Orders"],
+        "summary": "Mettre à jour le statut d'une commande",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["status"],
+                "properties": {
+                  "status": {"$ref": "#/components/schemas/OrderStatus"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Statut mis à jour",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {"type": "integer"},
+                    "status": {"$ref": "#/components/schemas/OrderStatus"},
+                    "updatedAt": {"type": "string", "format": "date-time"}
+                  }
+                }
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "parameters": {
+      "Page": {
+        "name": "page",
+        "in": "query",
+        "schema": {"type": "integer", "default": 1}
+      }
+    },
+    "requestBodies": {
+      "Credentials": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": ["email", "password"],
+              "properties": {
+                "email": {"type": "string", "format": "email"},
+                "password": {"type": "string", "format": "password"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "StatusResponse": {
+        "type": "object",
+        "properties": {
+          "status": {"type": "string", "example": "ok"}
+        }
+      },
+      "MessageResponse": {
+        "type": "object",
+        "properties": {
+          "message": {"type": "string"}
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {"type": "string"},
+          "role": {"$ref": "#/components/schemas/Role"}
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "email": {"type": "string", "format": "email"},
+          "role": {"$ref": "#/components/schemas/Role"}
+        }
+      },
+      "UserUpdate": {
+        "type": "object",
+        "properties": {
+          "email": {"type": "string", "format": "email"},
+          "password": {"type": "string", "format": "password"},
+          "role": {"$ref": "#/components/schemas/Role"}
+        }
+      },
+      "UserListResponse": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/User"}
+          },
+          "page": {"type": "integer"}
+        }
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "name": {"type": "string"},
+          "basePrice": {"type": "number", "format": "float"},
+          "description": {"type": "string"},
+          "image": {"type": "string"},
+          "category": {"$ref": "#/components/schemas/Category"},
+          "available": {"type": "boolean"},
+          "createdAt": {"type": "string", "format": "date-time"},
+          "updatedAt": {"type": "string", "format": "date-time"}
+        }
+      },
+      "ProductCreate": {
+        "type": "object",
+        "required": ["name", "basePrice", "category"],
+        "properties": {
+          "name": {"type": "string"},
+          "basePrice": {"type": "number", "format": "float", "minimum": 0.01},
+          "description": {"type": "string"},
+          "image": {"type": "string"},
+          "category": {"$ref": "#/components/schemas/Category"},
+          "available": {"type": "boolean", "default": true}
+        }
+      },
+      "ProductUpdate": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": {"type": "integer"},
+          "name": {"type": "string"},
+          "basePrice": {"type": "number", "format": "float"},
+          "description": {"type": "string"},
+          "image": {"type": "string"},
+          "category": {"$ref": "#/components/schemas/Category"},
+          "available": {"type": "boolean"}
+        }
+      },
+      "Menu": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "name": {"type": "string"},
+          "basePrice": {"type": "number", "format": "float"},
+          "description": {"type": "string"},
+          "image": {"type": "string"},
+          "products": {
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/Product"}
+          },
+          "createdAt": {"type": "string", "format": "date-time"},
+          "updatedAt": {"type": "string", "format": "date-time"}
+        }
+      },
+      "MenuCreate": {
+        "type": "object",
+        "required": ["name", "basePrice", "productIds"],
+        "properties": {
+          "name": {"type": "string"},
+          "basePrice": {"type": "number", "format": "float", "minimum": 0.01},
+          "description": {"type": "string"},
+          "image": {"type": "string"},
+          "productIds": {
+            "type": "array",
+            "items": {"type": "integer"},
+            "minItems": 1
+          }
+        }
+      },
+      "MenuUpdate": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": {"type": "integer"},
+          "name": {"type": "string"},
+          "basePrice": {"type": "number", "format": "float"},
+          "description": {"type": "string"},
+          "image": {"type": "string"}
+        }
+      },
+      "MenuResponse": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "name": {"type": "string"},
+          "basePrice": {"type": "number", "format": "float"},
+          "description": {"type": "string"},
+          "image": {"type": "string"},
+          "productIds": {
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/Product"}
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "status": {"$ref": "#/components/schemas/OrderStatus"},
+          "totalPrice": {"type": "number", "format": "float"},
+          "orderLines": {
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/OrderLine"}
+          },
+          "createdAt": {"type": "string", "format": "date-time"},
+          "updatedAt": {"type": "string", "format": "date-time"}
+        }
+      },
+      "OrderListResponse": {
+        "type": "object",
+        "properties": {
+          "orders": {
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/Order"}
+          },
+          "page": {"type": "integer"}
+        }
+      },
+      "OrderLine": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "orderId": {"type": "integer"},
+          "itemType": {"$ref": "#/components/schemas/ItemType"},
+          "itemName": {"type": "string"},
+          "unitPrice": {"type": "number", "format": "float"},
+          "quantity": {"type": "integer", "minimum": 1},
+          "description": {"type": "string"},
+          "image": {"type": "string"},
+          "createdAt": {"type": "string", "format": "date-time"},
+          "updatedAt": {"type": "string", "format": "date-time"}
+        }
+      },
+      "OrderItemRequest": {
+        "type": "object",
+        "required": ["itemType", "itemId", "quantity"],
+        "properties": {
+          "itemType": {"$ref": "#/components/schemas/ItemType"},
+          "itemId": {"type": "integer"},
+          "quantity": {"type": "integer", "minimum": 1}
+        }
+      },
+      "Role": {
+        "type": "string",
+        "enum": ["manager", "employee", "prep", "admin"]
+      },
+      "Category": {
+        "type": "string",
+        "enum": ["food", "drink"]
+      },
+      "OrderStatus": {
+        "type": "string",
+        "enum": ["pending", "confirmed", "preparing", "ready", "delivered", "cancelled"]
+      },
+      "ItemType": {
+        "type": "string",
+        "enum": ["product", "menu"]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {"type": "string"}
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Requête invalide",
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/Error"}
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Non autorisé",
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/Error"}
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Ressource non trouvée",
+        "content": {
+          "application/json": {
+            "schema": {"$ref": "#/components/schemas/Error"}
+          }
+        }
+      }
+    }
+  }
+}

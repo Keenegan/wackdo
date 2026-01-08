@@ -1,8 +1,10 @@
 package main
 
 import (
+	"time"
 	"wackdo/src/controllers"
 	controllers_menu "wackdo/src/controllers/menu"
+	controllers_order "wackdo/src/controllers/order"
 	controllers_products "wackdo/src/controllers/product"
 	controllers_user "wackdo/src/controllers/user"
 	"wackdo/src/initializers"
@@ -19,30 +21,76 @@ func main() {
 
 	r.Use(middleware.ErrorMiddleware())
 
-	r.Use(cors.Default())
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"}, // Only for development purpose
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: false,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	r.GET("/status", controllers.Status)
 
-	r.POST("/menu", controllers_menu.PostMenu)
-	r.GET("/menu", controllers_menu.GetMenu)
-	r.DELETE("/menu", controllers_menu.DeleteMenu)
-	r.PATCH("/menu", controllers_menu.UpdateMenu)
+	// Only managers can manage menu
+	menuRoutes := r.Group("/menu")
+	menuRoutes.Use(middleware.AuthMiddleware(models.RoleManager))
+	{
+		menuRoutes.POST("", controllers_menu.PostMenu)
+		menuRoutes.GET("", controllers_menu.GetMenu)
+		menuRoutes.DELETE("/:id", controllers_menu.DeleteMenu)
+		menuRoutes.PATCH("", controllers_menu.UpdateMenu)
+	}
 
-	r.POST("/product", controllers_products.PostProduct)
-	r.GET("/products", controllers_products.GetProducts)
-	r.DELETE("/product", controllers_products.DeleteProduct)
-	r.PATCH("/product", controllers_products.UpdateProduct)
+	// Only managers can manage products
+	productRoutes := r.Group("/product")
+	productRoutes.Use(middleware.AuthMiddleware(models.RoleManager))
+	{
+		productRoutes.POST("", controllers_products.PostProduct)
+		productRoutes.GET("", controllers_products.GetProducts)
+		productRoutes.DELETE("/:id", controllers_products.DeleteProduct)
+		productRoutes.PATCH("", controllers_products.UpdateProduct)
+	}
 
+	// Everyone can login & register (but only as an employee)
 	r.POST("/register", controllers_user.Register)
 	r.POST("/login", controllers_user.Login)
+
+	// Only manager can update user role & email
 	r.PATCH(
 		"/user/:id",
 		middleware.AuthMiddleware(
-			models.RoleAdmin,
 			models.RoleManager,
 		),
 		controllers_user.UpdateUser,
 	)
+
+	// Only manager can list all users
+	r.GET("/users",
+		middleware.AuthMiddleware(
+			models.RoleManager,
+		),
+		controllers_user.GetUsers)
+
+	// Only employees and managers can create orders
+	r.POST("/order/",
+		middleware.AuthMiddleware(
+			models.RoleEmployee,
+			models.RoleManager,
+		),
+		controllers_order.PostOrder)
+
+	// Everyone can see orders
+	r.GET("/orders", controllers_order.GetOrders)
+	r.GET("/order/:id", controllers_order.GetOrder)
+
+	// Only prep & managers can update order status
+	r.PATCH("/order/:id",
+		middleware.AuthMiddleware(
+			models.RolePrep,
+			models.RoleManager,
+		),
+		controllers_order.PatchOrder)
 
 	r.Run()
 }

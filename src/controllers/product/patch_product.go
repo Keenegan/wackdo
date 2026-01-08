@@ -2,8 +2,8 @@ package controllers_products
 
 import (
 	"net/http"
-	"wackdo/src/initializers"
 	"wackdo/src/models"
+	"wackdo/src/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,26 +22,29 @@ func UpdateProduct(c *gin.Context) {
 	var req ProductUpdateRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
 
-	var product models.Product
-	if err := initializers.DB.First(&product, req.ID).Error; err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+	product, err := service.GetProductById(int(req.ID))
+	if err != nil {
+		c.Error(err)
 		return
 	}
 
 	if req.Name != product.Name {
-		var count int64
-		initializers.DB.Model(&models.Product{}).
-			Where("name = ?", req.Name).
-			Count(&count)
+		exists, err := service.ProductExists(req.Name)
+		if err != nil {
+			c.Error(err)
+			return
+		}
 
-		if count > 0 {
-			c.JSON(400, gin.H{"error": "Product name already exists"})
+		if exists {
+			c.Error(&service.InvalidParamError{
+				Reason: "Product name already exists",
+			})
 			return
 		}
 	}
@@ -56,9 +59,9 @@ func UpdateProduct(c *gin.Context) {
 		product.Available = *req.Available
 	}
 
-	err := initializers.DB.Save(&product).Error
+	product, err = service.UpdateProduct(product)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		c.Error(err)
 		return
 	}
 
