@@ -2,13 +2,16 @@ package controllers_user
 
 import (
 	"net/http"
-	"wackdo/src/initializers"
+	"net/mail"
+	"strconv"
 	"wackdo/src/models"
+	"wackdo/src/service"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
 
+// todo check
 type UserUpdateRequest struct {
 	Email    *string      `json:"email"`
 	Password *string      `json:"password"`
@@ -16,7 +19,12 @@ type UserUpdateRequest struct {
 }
 
 func UpdateUser(c *gin.Context) {
-	userID := c.Param("id")
+	userIDStr := c.Param("id")
+	userID, err := strconv.ParseUint(userIDStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user ID"})
+		return
+	}
 
 	var body UserUpdateRequest
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -24,10 +32,15 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	requesterRole := c.MustGet("role").(models.Role)
+	if _, err := mail.ParseAddress(*body.Email); err != nil {
+		c.Error(&service.InvalidParamError{
+			Reason: "email is invalid",
+		})
+		return
+	}
 
-	var user models.User
-	if err := initializers.DB.First(&user, userID).Error; err != nil {
+	user, err := service.GetUserById(uint(userID))
+	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}
@@ -46,32 +59,22 @@ func UpdateUser(c *gin.Context) {
 	}
 
 	if body.Role != nil {
-		if !models.IsValidRole(*body.Role) {
+		if !models.IsValidRole(*body.Role) && *body.Role != models.RoleAdmin {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid role"})
-			return
-		}
-
-		if requesterRole == models.RoleManager && *body.Role == models.RoleAdmin {
-			c.JSON(http.StatusForbidden, gin.H{
-				"error": "manager cannot assign admin role",
-			})
 			return
 		}
 
 		user.Role = *body.Role
 	}
 
-	if err := initializers.DB.Save(&user).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "update failed"})
+	user, err = service.UpdateUserFull(user)
+	if err != nil {
+		c.Error(err)
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "user updated",
-		"user": gin.H{
-			"id":    user.ID,
-			"email": user.Email,
-			"role":  user.Role,
-		},
+		"user":    user,
 	})
 }

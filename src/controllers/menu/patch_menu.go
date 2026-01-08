@@ -2,8 +2,7 @@ package controllers_menus
 
 import (
 	"net/http"
-	"wackdo/src/initializers"
-	"wackdo/src/models"
+	"wackdo/src/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,26 +20,29 @@ func UpdateMenu(c *gin.Context) {
 	var req MenuUpdateRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(400, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
 
-	var menu models.Menu
-	if err := initializers.DB.First(&menu, req.ID).Error; err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+	menu, err := service.GetMenuById(int(req.ID))
+	if err != nil {
+		c.Error(err)
 		return
 	}
 
 	if req.Name != menu.Name {
-		var count int64
-		initializers.DB.Model(&models.Menu{}).
-			Where("name = ?", req.Name).
-			Count(&count)
+		exists, err := service.MenuExists(req.Name)
+		if err != nil {
+			c.Error(err)
+			return
+		}
 
-		if count > 0 {
-			c.JSON(400, gin.H{"error": "Menu name already exists"})
+		if exists {
+			c.Error(&service.InvalidParamError{
+				Reason: "Menu name already exists",
+			})
 			return
 		}
 	}
@@ -50,9 +52,9 @@ func UpdateMenu(c *gin.Context) {
 	menu.Description = req.Description
 	menu.Image = req.Image
 
-	err := initializers.DB.Save(&menu).Error
+	menu, err = service.UpdateMenu(menu)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		c.Error(err)
 		return
 	}
 

@@ -2,7 +2,7 @@ package controllers_user
 
 import (
 	"net/http"
-	"wackdo/src/initializers"
+	"net/mail"
 	"wackdo/src/models"
 	"wackdo/src/service"
 
@@ -10,7 +10,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// todo add error message if email exists
 func Register(c *gin.Context) {
 	var body struct {
 		Email    string
@@ -24,7 +23,18 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	hash, _ := bcrypt.GenerateFromPassword([]byte(body.Password), 10)
+	if _, err := mail.ParseAddress(body.Email); err != nil {
+		c.Error(&service.InvalidParamError{
+			Reason: "email is invalid",
+		})
+		return
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), 10)
+	if err != nil {
+		c.Error(err)
+		return
+	}
 
 	user := models.User{
 		Email:    body.Email,
@@ -32,6 +42,11 @@ func Register(c *gin.Context) {
 		Role:     models.RoleEmployee,
 	}
 
-	initializers.DB.Create(&user)
+	_, err = service.CreateUser(user)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
 	c.JSON(http.StatusCreated, gin.H{"message": "user created"})
 }

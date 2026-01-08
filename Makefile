@@ -8,6 +8,9 @@ run:
 test:
 	go test ./...
 
+.PHONY: check
+check:
+	staticcheck ./...
 
 .PHONY: up
 up:

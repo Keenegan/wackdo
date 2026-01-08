@@ -2,27 +2,24 @@ package controllers_menus
 
 import (
 	"net/http"
+	"strconv"
 	"wackdo/src/service"
 
 	"github.com/gin-gonic/gin"
 )
 
-type MenuDeleteRequest struct {
-	ID int `json:"id" binding:"required"`
-}
-
 func DeleteMenu(c *gin.Context) {
-	var req MenuDeleteRequest
-
-	if err := c.ShouldBindJSON(&req); err != nil {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
+			"error": "invalid id parameter",
 		})
 		return
 	}
 
-	if err := service.DeleteMenuById(req.ID); err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+	if err := service.DeleteMenuById(id); err != nil {
+		c.Error(err)
 		return
 	}
 

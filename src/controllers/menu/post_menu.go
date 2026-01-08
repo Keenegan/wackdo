@@ -45,8 +45,20 @@ func PostMenu(c *gin.Context) {
 		return
 	}
 	if len(products) != len(req.ProductIds) {
-		// todo say which
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Some products ids were not found"})
+		foundIds := make(map[uint]bool)
+		for _, p := range products {
+			foundIds[p.ID] = true
+		}
+		var missingIds []uint
+		for _, id := range req.ProductIds {
+			if !foundIds[id] {
+				missingIds = append(missingIds, id)
+			}
+		}
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":      "Some product IDs were not found",
+			"missingIds": missingIds,
+		})
 		return
 	}
 	for _, product := range products {
@@ -66,7 +78,8 @@ func PostMenu(c *gin.Context) {
 		Products:    products,
 	})
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Error(err)
+		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{

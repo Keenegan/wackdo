@@ -2,32 +2,28 @@ package controllers_products
 
 import (
 	"net/http"
+	"strconv"
 	"wackdo/src/service"
 
 	"github.com/gin-gonic/gin"
 )
 
-type ProductDeleteRequest struct {
-	ID int `json:"id" binding:"required"`
-}
-
 // todo delete product in a menu ?
 func DeleteProduct(c *gin.Context) {
-	var req ProductDeleteRequest
-
-	if err := c.ShouldBindJSON(&req); err != nil {
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
+			"error": "invalid id parameter",
 		})
 		return
 	}
 
-	if err := service.DeleteProductById(req.ID); err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+	if err := service.DeleteProductById(id); err != nil {
+		c.Error(err)
 		return
 	}
 
 	c.JSON(http.StatusNoContent, "")
 }
-
 // todo add test for this file
