@@ -1,10 +1,15 @@
 package initializers
 
-import "github.com/joho/godotenv"
+import (
+	"log"
+
+	"github.com/joho/godotenv"
+)
 
 func LoadEnv() {
 	err := godotenv.Load()
 	if err != nil {
-		panic("Error loading .env file : " + err.Error())
+		// In production (Render), env vars are injected directly, no .env file needed
+		log.Println("No .env file found, using environment variables")
 	}
 }

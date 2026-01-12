@@ -9,6 +9,10 @@
     {
       "url": "http://localhost:8080",
       "description": "Serveur de développement"
+    },
+    {
+      "url": "https://wackdo-api.onrender.com",
+      "description": "Serveur de prod"
     }
   ],
   "tags": [
