@@ -9,6 +9,10 @@
     {
       "url": "http://localhost:8080",
       "description": "Serveur de développement"
+    },
+    {
+      "url": "https://wackdo-api.onrender.com",
+      "description": "Serveur de prod"
     }
   ],
   "tags": [
@@ -271,7 +275,7 @@
     "/product/search": {
       "get": {
         "tags": ["Products"],
-        "summary": "Rechercher un produit par nom",
+        "summary": "Rechercher des produits par nom (correspondance partielle)",
         "security": [{"bearerAuth": []}],
         "parameters": [
           {
@@ -279,21 +283,23 @@
             "in": "query",
             "required": true,
             "schema": {"type": "string"},
-            "description": "Nom du produit à rechercher"
+            "description": "Nom ou partie du nom du produit à rechercher"
           }
         ],
         "responses": {
           "200": {
-            "description": "Produit trouvé",
+            "description": "Produits trouvés",
             "content": {
               "application/json": {
-                "schema": {"$ref": "#/components/schemas/Product"}
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/Product"}
+                }
               }
             }
           },
           "400": {"$ref": "#/components/responses/BadRequest"},
-          "401": {"$ref": "#/components/responses/Unauthorized"},
-          "404": {"$ref": "#/components/responses/NotFound"}
+          "401": {"$ref": "#/components/responses/Unauthorized"}
         }
       }
     },
@@ -422,7 +428,7 @@
     "/menu/search": {
       "get": {
         "tags": ["Menu"],
-        "summary": "Rechercher un menu par nom",
+        "summary": "Rechercher des menus par nom (correspondance partielle)",
         "security": [{"bearerAuth": []}],
         "parameters": [
           {
@@ -430,21 +436,23 @@
             "in": "query",
             "required": true,
             "schema": {"type": "string"},
-            "description": "Nom du menu à rechercher"
+            "description": "Nom ou partie du nom du menu à rechercher"
           }
         ],
         "responses": {
           "200": {
-            "description": "Menu trouvé",
+            "description": "Menus trouvés",
             "content": {
               "application/json": {
-                "schema": {"$ref": "#/components/schemas/Menu"}
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/Menu"}
+                }
               }
             }
           },
           "400": {"$ref": "#/components/responses/BadRequest"},
-          "401": {"$ref": "#/components/responses/Unauthorized"},
-          "404": {"$ref": "#/components/responses/NotFound"}
+          "401": {"$ref": "#/components/responses/Unauthorized"}
         }
       }
     },
@@ -734,7 +742,11 @@
           "name": {"type": "string"},
           "basePrice": {"type": "number", "format": "float"},
           "description": {"type": "string"},
-          "image": {"type": "string"}
+          "image": {"type": "string"},
+          "productIds": {
+            "type": "array",
+            "items": {"type": "integer"}
+          }
         }
       },
       "MenuResponse": {
@@ -801,7 +813,7 @@
       },
       "Role": {
         "type": "string",
-        "enum": ["manager", "employee", "prep", "admin"]
+        "enum": ["manager", "cashier", "prep", "admin"]
       },
       "Category": {
         "type": "string",

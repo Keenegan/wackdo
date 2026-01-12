@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: wackdo-api
+    runtime: docker
+    plan: free
+    healthCheckPath: /status
+    envVars:
+      - key: POSTGRES_USER
+        fromDatabase:
+          name: wackdo-db
+          property: user
+      - key: POSTGRES_PASSWORD
+        fromDatabase:
+          name: wackdo-db
+          property: password
+      - key: POSTGRES_DB
+        fromDatabase:
+          name: wackdo-db
+          property: database
+      - key: POSTGRES_PORT
+        fromDatabase:
+          name: wackdo-db
+          property: port
+      - key: POSTGRES_HOST
+        fromDatabase:
+          name: wackdo-db
+          property: host
+      - key: DATABASE_URL
+        fromDatabase:
+          name: wackdo-db
+          property: connectionString
+      - key: JWT_SECRET_KEY
+        generateValue: true
+
+databases:
+  - name: wackdo-db
+    plan: free
+    databaseName: wackdo
+    user: wackdo_user

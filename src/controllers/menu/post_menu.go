@@ -82,14 +82,7 @@ func PostMenu(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"id":          newMenu.ID,
-		"name":        newMenu.Name,
-		"basePrice":   newMenu.BasePrice,
-		"description": newMenu.Description,
-		"image":       newMenu.Image,
-		"productIds":  newMenu.Products,
-	})
+	c.JSON(http.StatusCreated, newMenu)
 }
 
 func ValidateMenuPostRequest(req *MenuPostRequest) error {

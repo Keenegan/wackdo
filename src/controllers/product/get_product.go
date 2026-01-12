@@ -47,7 +47,7 @@ func GetProductById(c *gin.Context) {
 	c.JSON(http.StatusOK, product)
 }
 
-// GetProductByName searches for a product by name
+// GetProductByName searches for products by name (partial match)
 func GetProductByName(c *gin.Context) {
 	name := c.Query("name")
 
@@ -58,11 +58,11 @@ func GetProductByName(c *gin.Context) {
 		return
 	}
 
-	product, err := service.GetProductByName(name)
+	products, err := service.GetProductByName(name)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	c.JSON(http.StatusOK, product)
+	c.JSON(http.StatusOK, products)
 }

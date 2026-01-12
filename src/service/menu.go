@@ -30,23 +30,20 @@ func GetMenuById(id int) (models.Menu, error) {
 	return menu, nil
 }
 
-func GetMenuByName(name string) (models.Menu, error) {
-	var menu models.Menu
+func GetMenuByName(name string) ([]models.Menu, error) {
+	var menus []models.Menu
 
 	err := initializers.DB.
 		Preload("Products").
-		Where("name = ?", name).
-		First(&menu).
+		Where("name LIKE ?", "%"+name+"%").
+		Find(&menus).
 		Error
 
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return menu, &EntityNotFoundError{models.Menu{}}
-		}
-		return menu, err
+		return menus, err
 	}
 
-	return menu, nil
+	return menus, nil
 }
 
 func GetMenus(page, pageSize int) ([]models.Menu, error) {
@@ -100,6 +97,9 @@ func CreateMenu(menu models.Menu) (models.Menu, error) {
 
 func UpdateMenu(menu models.Menu) (models.Menu, error) {
 	if err := initializers.DB.Save(&menu).Error; err != nil {
+		return menu, err
+	}
+	if err := initializers.DB.Model(&menu).Association("Products").Replace(menu.Products); err != nil {
 		return menu, err
 	}
 	return menu, nil

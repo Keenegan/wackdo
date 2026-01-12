@@ -50,15 +50,7 @@ func PostProduct(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"id":          newProduct.ID,
-		"name":        newProduct.Name,
-		"basePrice":   newProduct.BasePrice,
-		"description": newProduct.Description,
-		"image":       newProduct.Image,
-		"category":    newProduct.Category,
-		"available":   newProduct.Available,
-	})
+	c.JSON(http.StatusCreated, newProduct)
 }
 
 func ValidateProductPostRequest(req *ProductPostRequest) error {
@@ -81,4 +73,3 @@ func ValidateProductPostRequest(req *ProductPostRequest) error {
 
 	return nil
 }
-

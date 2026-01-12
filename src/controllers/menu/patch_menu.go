@@ -1,6 +1,7 @@
 package controllers_menus
 
 import (
+	"fmt"
 	"net/http"
 	"wackdo/src/service"
 
@@ -13,9 +14,9 @@ type MenuUpdateRequest struct {
 	BasePrice   float32 `json:"basePrice"`
 	Description string  `json:"description"`
 	Image       string  `json:"image"`
+	ProductIds  []uint  `json:"productIds"`
 }
 
-// todo allow product id change
 func UpdateMenu(c *gin.Context) {
 	var req MenuUpdateRequest
 
@@ -51,6 +52,40 @@ func UpdateMenu(c *gin.Context) {
 	menu.BasePrice = req.BasePrice
 	menu.Description = req.Description
 	menu.Image = req.Image
+
+	if len(req.ProductIds) > 0 {
+		products, err := service.GetProductsByIds(req.ProductIds)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		if len(products) != len(req.ProductIds) {
+			foundIds := make(map[uint]bool)
+			for _, p := range products {
+				foundIds[p.ID] = true
+			}
+			var missingIds []uint
+			for _, id := range req.ProductIds {
+				if !foundIds[id] {
+					missingIds = append(missingIds, id)
+				}
+			}
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":      "Some product IDs were not found",
+				"missingIds": missingIds,
+			})
+			return
+		}
+		for _, product := range products {
+			if !product.Available {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"error": fmt.Sprintf("product %d is not available", product.ID),
+				})
+				return
+			}
+		}
+		menu.Products = products
+	}
 
 	menu, err = service.UpdateMenu(menu)
 	if err != nil {

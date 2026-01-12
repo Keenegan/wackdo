@@ -18,8 +18,8 @@ func TestIsValidRole(t *testing.T) {
 			valid: true,
 		},
 		{
-			name:  "employee is valid",
-			role:  RoleEmployee,
+			name:  "cashier is valid",
+			role:  RoleCashier,
 			valid: true,
 		},
 		{

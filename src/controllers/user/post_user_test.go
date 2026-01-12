@@ -72,8 +72,8 @@ func TestRoleValidation(t *testing.T) {
 			valid: true,
 		},
 		{
-			name:  "employee is valid",
-			role:  models.RoleEmployee,
+			name:  "cashier is valid",
+			role:  models.RoleCashier,
 			valid: true,
 		},
 		{

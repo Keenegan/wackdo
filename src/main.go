@@ -56,7 +56,7 @@ func main() {
 		productRoutes.PATCH("", controllers_products.UpdateProduct)
 	}
 
-	// Everyone can login & register (but only as an employee)
+	// Everyone can login & register (but only as a cashier)
 	r.POST("/register", controllers_user.Register)
 	r.POST("/login", controllers_user.Login)
 
@@ -76,10 +76,10 @@ func main() {
 		),
 		controllers_user.GetUsers)
 
-	// Only employees and managers can create orders
+	// Only cashiers and managers can create orders
 	r.POST("/order/",
 		middleware.AuthMiddleware(
-			models.RoleEmployee,
+			models.RoleCashier,
 			models.RoleManager,
 		),
 		controllers_order.PostOrder)
