@@ -21,7 +21,7 @@ func (c Category) IsValid() bool {
 type Product struct {
 	ID          uint     `gorm:"primaryKey"`
 	Name        string   `gorm:"type:varchar(255);not null"`
-	BasePrice   float32  `gorm:"not null"`
+	BasePrice   float32  `gorm:"not null;type:numeric(8,2)"`
 	Description string   `gorm:"type:text"`
 	Image       string   `gorm:"type:varchar(255)"`
 	Category    Category `gorm:"type:varchar(20);not null"`

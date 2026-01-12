@@ -47,7 +47,7 @@ func GetMenuById(c *gin.Context) {
 	c.JSON(http.StatusOK, menu)
 }
 
-// GetMenuByName searches for a menu by name
+// GetMenuByName searches for menus by name (partial match)
 func GetMenuByName(c *gin.Context) {
 	name := c.Query("name")
 
@@ -58,11 +58,11 @@ func GetMenuByName(c *gin.Context) {
 		return
 	}
 
-	menu, err := service.GetMenuByName(name)
+	menus, err := service.GetMenuByName(name)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	c.JSON(http.StatusOK, menu)
+	c.JSON(http.StatusOK, menus)
 }

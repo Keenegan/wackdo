@@ -2,12 +2,10 @@
 
 A REST API for managing a food ordering system built with Go and Gin.
 
-## Features
+## Documentation
 
-- Menu and product management
-- Order creation and tracking
-- User management with role-based access control
-- JWT authentication
+- [Class Diagram](docs/CLASS-DIAGRAM.md) - System architecture and data models
+- [API documentation](https://keenegan.github.io/wackdo/)
 
 ## Setup
 
@@ -46,19 +44,6 @@ Database admin interface (Adminer) is available at `http://localhost:8081`
 The application has four user roles:
 
 - **Manager** - Full access to manage menus, products, users, and orders
-- **Employee** - Can create orders
+- **Cashier** - Can create orders
 - **Prep** - Can update order status
 - **Admin** - Superuser with all permissions
-
-## Documentation
-
-- [Class Diagram](docs/CLASS-DIAGRAM.md) - System architecture and data models
-- [API documentation](https://keenegan.github.io/wackdo/)
-
-## Tech Stack
-
-- Go 1.25
-- Gin Web Framework
-- GORM (PostgreSQL)
-- JWT authentication
-- Docker & Docker Compose

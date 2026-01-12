@@ -26,22 +26,19 @@ func GetProductById(id int) (models.Product, error) {
 	return product, nil
 }
 
-func GetProductByName(name string) (models.Product, error) {
-	var product models.Product
+func GetProductByName(name string) ([]models.Product, error) {
+	var products []models.Product
 
 	err := initializers.DB.
-		Where("name = ?", name).
-		First(&product).
+		Where("name LIKE ?", "%"+name+"%").
+		Find(&products).
 		Error
 
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return product, &EntityNotFoundError{models.Product{}}
-		}
-		return product, err
+		return products, err
 	}
 
-	return product, nil
+	return products, nil
 }
 
 func GetProducts(page, pageSize int) ([]models.Product, error) {

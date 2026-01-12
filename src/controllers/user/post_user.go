@@ -39,7 +39,7 @@ func Register(c *gin.Context) {
 	user := models.User{
 		Email:    body.Email,
 		Password: string(hash),
-		Role:     models.RoleEmployee,
+		Role:     models.RoleCashier,
 	}
 
 	_, err = service.CreateUser(user)

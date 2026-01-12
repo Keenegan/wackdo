@@ -1,7 +1,7 @@
 ```mermaid
 classDiagram
 
-    class Employee {
+    class Cashier {
         id : int
         name: String
         roles: Role[0..*]
@@ -19,7 +19,6 @@ classDiagram
         id : int
         createdAt : Date
         status : OrderStatus
-        +getTotalPrice(): float
     }
 
     class OrderStatus {
@@ -68,7 +67,7 @@ classDiagram
 
     Order "1" *-- "1..*" OrderLine : contains
     OrderLine "1" --> "1" SellableItem : refersTo
-    Order "1" --> "1" Employee : has
+    Order "1" --> "1" Cashier : has
     Menu "1" --> "1..*" Product : composedOf
     Menu "1" --> "0..*" MenuOption: has
 ```
