@@ -66,7 +66,27 @@ func DeleteProductById(id int) error {
 		return errors.New("invalid id")
 	}
 
-	return initializers.DB.Delete(&models.Product{}, id).Error
+	return initializers.DB.Transaction(func(tx *gorm.DB) error {
+		// Find all menus containing this product
+		var menus []models.Menu
+		err := tx.
+			Joins("JOIN menu_products ON menu_products.menu_id = menus.id").
+			Where("menu_products.product_id = ?", id).
+			Find(&menus).Error
+		if err != nil {
+			return err
+		}
+
+		// Delete all menus that contain this product
+		for _, menu := range menus {
+			if err := tx.Delete(&menu).Error; err != nil {
+				return err
+			}
+		}
+
+		// Delete the product
+		return tx.Delete(&models.Product{}, id).Error
+	})
 }
 
 func ProductExists(name string) (bool, error) {

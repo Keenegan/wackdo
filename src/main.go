@@ -37,7 +37,9 @@ func main() {
 	menuRoutes.Use(middleware.AuthMiddleware(models.RoleManager))
 	{
 		menuRoutes.POST("", controllers_menu.PostMenu)
-		menuRoutes.GET("", controllers_menu.GetMenu)
+		menuRoutes.GET("", controllers_menu.GetMenus)
+		menuRoutes.GET("/:id", controllers_menu.GetMenuById)
+		menuRoutes.GET("/search", controllers_menu.GetMenuByName)
 		menuRoutes.DELETE("/:id", controllers_menu.DeleteMenu)
 		menuRoutes.PATCH("", controllers_menu.UpdateMenu)
 	}
@@ -48,6 +50,8 @@ func main() {
 	{
 		productRoutes.POST("", controllers_products.PostProduct)
 		productRoutes.GET("", controllers_products.GetProducts)
+		productRoutes.GET("/:id", controllers_products.GetProductById)
+		productRoutes.GET("/search", controllers_products.GetProductByName)
 		productRoutes.DELETE("/:id", controllers_products.DeleteProduct)
 		productRoutes.PATCH("", controllers_products.UpdateProduct)
 	}

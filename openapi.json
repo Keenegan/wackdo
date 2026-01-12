@@ -149,11 +149,9 @@
     "/product": {
       "get": {
         "tags": ["Products"],
-        "summary": "Lister ou rechercher des produits",
+        "summary": "Lister tous les produits",
         "security": [{"bearerAuth": []}],
         "parameters": [
-          {"name": "id", "in": "query", "schema": {"type": "integer"}},
-          {"name": "name", "in": "query", "schema": {"type": "string"}},
           {"$ref": "#/components/parameters/Page"}
         ],
         "responses": {
@@ -168,9 +166,7 @@
               }
             }
           },
-          "400": {"$ref": "#/components/responses/BadRequest"},
-          "401": {"$ref": "#/components/responses/Unauthorized"},
-          "404": {"$ref": "#/components/responses/NotFound"}
+          "401": {"$ref": "#/components/responses/Unauthorized"}
         }
       },
       "post": {
@@ -226,6 +222,32 @@
       }
     },
     "/product/{id}": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Obtenir un produit par ID",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Détails du produit",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Product"}
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      },
       "delete": {
         "tags": ["Products"],
         "summary": "Supprimer un produit",
@@ -246,14 +268,41 @@
         }
       }
     },
+    "/product/search": {
+      "get": {
+        "tags": ["Products"],
+        "summary": "Rechercher un produit par nom",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {"type": "string"},
+            "description": "Nom du produit à rechercher"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produit trouvé",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Product"}
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      }
+    },
     "/menu": {
       "get": {
         "tags": ["Menu"],
-        "summary": "Lister ou rechercher des menus",
+        "summary": "Lister tous les menus",
         "security": [{"bearerAuth": []}],
         "parameters": [
-          {"name": "id", "in": "query", "schema": {"type": "integer"}},
-          {"name": "name", "in": "query", "schema": {"type": "string"}},
           {"$ref": "#/components/parameters/Page"}
         ],
         "responses": {
@@ -268,9 +317,7 @@
               }
             }
           },
-          "400": {"$ref": "#/components/responses/BadRequest"},
-          "401": {"$ref": "#/components/responses/Unauthorized"},
-          "404": {"$ref": "#/components/responses/NotFound"}
+          "401": {"$ref": "#/components/responses/Unauthorized"}
         }
       },
       "post": {
@@ -326,6 +373,32 @@
       }
     },
     "/menu/{id}": {
+      "get": {
+        "tags": ["Menu"],
+        "summary": "Obtenir un menu par ID",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Détails du menu",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Menu"}
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      },
       "delete": {
         "tags": ["Menu"],
         "summary": "Supprimer un menu",
@@ -340,6 +413,35 @@
         ],
         "responses": {
           "204": {"description": "Menu supprimé"},
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "401": {"$ref": "#/components/responses/Unauthorized"},
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      }
+    },
+    "/menu/search": {
+      "get": {
+        "tags": ["Menu"],
+        "summary": "Rechercher un menu par nom",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {"type": "string"},
+            "description": "Nom du menu à rechercher"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Menu trouvé",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/Menu"}
+              }
+            }
+          },
           "400": {"$ref": "#/components/responses/BadRequest"},
           "401": {"$ref": "#/components/responses/Unauthorized"},
           "404": {"$ref": "#/components/responses/NotFound"}
